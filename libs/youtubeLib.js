@@ -1,25 +1,43 @@
-const youtube = (youtubedl ) => ({
+module.exports = ({ youtubedl, fs, path }) => ({
     /**
-     * 描述
-     * @date 2021-01-17
+     * this method downloads a video from youtube
      * @param {string} url
-     * @param {string} formate
+     * @param {string} formate [mp3, mp4]
      */
     donwloadVideo: (url, formate) => {
-        const video = youtubedl('http://www.youtube.com/watch?v=90AiXO1pAiA',
+        const video = youtubedl(url,
         ['--format=18'],
         { cwd: __dirname })
 
-
+        let size = 0;
+        let tags = {};
         video.on('info', function(info) {
             console.log('Download started')
             console.log('filename: ' + info._filename)
             console.log('size: ' + info.size)
 
-            video.pipe(fs.createWriteStream('myvideo.mp4'))
-        })        
+            size = info.size;
+            tags = info;
+            video.pipe(fs.createWriteStream(path.join(__dirname, `../Musica/${info.title}.${formate}`)))
+        })
+        
+        let pos = 0
+        video.on('data', function data(chunk) {
+          pos += chunk.length
+          if (size) {
+            let percent = (pos / size * 100).toFixed(2)
+            process.stdout.cursorTo(0)
+            process.stdout.clearLine(1)
+            process.stdout.write(percent + '%')
+          }
+        })
     },
 
+    /**
+     * this method downloads a playlist from youtube
+     * @param {any} url
+     * @returns {any}
+     */
     donwloadPlaylist: (url) => {
         const video = youtubedl(url)
       
@@ -30,7 +48,7 @@ const youtube = (youtubedl ) => ({
         let size = 0
         video.on('info', function(info) {
           size = info.size
-          let output = path.join(__dirname + '/', size + '.mp4')
+          let output = path.join(__dirname + '../Musica/' + size + '.mp4')
           video.pipe(fs.createWriteStream(output))
         })
       
