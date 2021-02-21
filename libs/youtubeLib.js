@@ -5,6 +5,9 @@ module.exports = ({ youtubedl, fs, path }) => ({
      * @param {string} formate [mp3, mp4]
      */
     donwloadVideo: (url, formate) => {
+        if (!fs.existsSync(path.join(__dirname, '../Musica')))
+          fs.mkdirSync(path.join(__dirname, '../Musica')); 
+
         const video = youtubedl(url,
         ['--format=18'],
         { cwd: __dirname })
@@ -39,6 +42,9 @@ module.exports = ({ youtubedl, fs, path }) => ({
      * @returns {any}
      */
     donwloadPlaylist: (url) => {
+        if (!fs.existsSync(path.join(__dirname, '../Musica')))
+          fs.mkdirSync(path.join(__dirname, '../Musica')); 
+
         const video = youtubedl(url)
       
         video.on('error', function error(err) {
