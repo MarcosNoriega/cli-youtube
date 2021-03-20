@@ -1,7 +1,8 @@
-const { inquirer } = require('./service');
-const { youtubeLib, metaData, inquireLib } = require('./libs');
+const { inquireLib } = require('./libs');
+const strategies = require('./strategies');
 
 (async () => {
     const answers = await inquireLib.toAsk();
-    youtubeLib.donwloadVideo(answers.link, answers.formate);
+    let selectedStrategy = strategies(answers.type);
+    selectedStrategy.downloadYoutube(answers.link, answers.formate);
 })();
